@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import AuthLayout from '../layouts/AuthLayout'
-import Register from '../features/auth/components/Register'
+import Register from '../components/Auth/Register'
 
 function RegisterPage() {
     

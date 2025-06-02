@@ -5,7 +5,10 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { NavLink } from 'react-router-dom';
-import { Wrapper ,FormWrapper } from '../../../components/component'; // Ensure Wrapper is styled and imported correctly
+import axios from "axios"
+import { Wrapper ,FormWrapper } from '../component'; // Ensure Wrapper is styled and imported correctly
+import { BASE_URL } from '../../Baseurl';
+import { Alert } from '@mui/material';
 
 
 
@@ -27,6 +30,8 @@ const Login: React.FC = () => {
       password:"",
     })
 
+    const [message,Setmessage] = useState<string|null>()
+
     const [Error,SetError] = useState<Users>({
       email:"",
       password:""
@@ -34,6 +39,22 @@ const Login: React.FC = () => {
 
     const HandleInputs = async (e:React.ChangeEvent<HTMLInputElement>)=>{
         SetData({...Data,[e.target.name]:e.target.value})
+      }
+
+      const HandleLogin = async()=>{
+        const res  = await axios.post(`${BASE_URL}/Auth/Login`,{...Data},{withCredentials:true})
+        console.log(res)
+        if(res?.status === 201){
+          Setmessage(res?.data?.message)
+          setTimeout(()=>{
+            Setmessage(null)
+          },3000)
+        }else{
+          Setmessage("Error Occured")
+          setTimeout(()=>{
+            Setmessage(null)
+          },3000)
+        }
       }
 
       
@@ -57,6 +78,7 @@ const Login: React.FC = () => {
 
   return (
     <Wrapper>
+      {message?message==="Error Occured"?<Alert severity="error">{message}</Alert>:<Alert severity="success">{message}</Alert>:null}
       <Card sx={{ padding: 3, minWidth: 350 }}>
         <CardContent>
           <Typography variant="h4" align="center" gutterBottom>
@@ -67,10 +89,11 @@ const Login: React.FC = () => {
             <TextField label="Email" type="email" name='email' onChange={HandleInputs} value={Data.email} variant="outlined" fullWidth />
             {Error.password?<p style={{padding:"0px", height:"1px", color:"red"}}>{Error.password}</p>:null}
             <TextField label="Password" type="password" name='password' onChange={HandleInputs} value={Data.password} variant="outlined" fullWidth />
-            <Button variant="contained" color="primary" fullWidth>
+            <Button variant="contained" onClick={HandleLogin} color="primary" fullWidth>
               Login
             </Button>
           </FormWrapper>
+          <p><NavLink to={"/ForgotPassword"}>ForgotPassword?</NavLink> </p>
           <h4>Don't Have Account <NavLink to={"/Register"}>Register</NavLink> </h4>
         </CardContent>
       </Card>

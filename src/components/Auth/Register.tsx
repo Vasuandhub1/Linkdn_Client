@@ -4,9 +4,17 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Wrapper } from '../../../components/component'; // Ensure Wrapper is styled and imported correctly
-import { FormWrapper } from '../../../components/component';
-import { NavLink } from 'react-router-dom';
+import { Wrapper } from '../component'; // Ensure Wrapper is styled and imported correctly
+import { FormWrapper } from '../component';
+import { data, NavLink } from 'react-router-dom';
+import axios from "axios"
+import { BASE_URL } from '../../Baseurl';
+import { useNavigate } from 'react-router-dom';
+import { Alert } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import styled from 'styled-components';
+
 
 function Register() {
   interface Users{
@@ -23,12 +31,20 @@ function Register() {
     confirmPassword:""
   })
 
+  const [file,Setfile]=useState()
+
+  const navigate = useNavigate()
+
     const [Error,SetError] = useState<Users>({
       name:"",
         email:"",
         password:"",
         confirmPassword:""
       })
+
+      const [message,SetMesage]=useState<string|null>()
+
+      const [loading,SetLoading]=useState<boolean>(false)
 
   let Mailregex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   let PasswordRegex = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/;
@@ -37,6 +53,44 @@ function Register() {
   const HandleInputs = async (e:React.ChangeEvent<HTMLInputElement>)=>{
     SetData({...Data,[e.target.name]:e.target.value})
   }
+
+  const HandleRegister = async()=>{
+    const formdata = new FormData()
+    formdata.append("name",Data.name)
+    formdata.append("email",Data.email)
+    formdata.append("password",Data.password)
+    formdata.append("file",file!)
+    const res = await axios.post(`${BASE_URL}/Auth/Register`,formdata) 
+    console.log(res)
+    if(res.status===201){
+      SetLoading(true)
+      SetMesage(res?.data?.message)
+      setTimeout(() => {
+        SetMesage(null)
+        SetLoading(false)
+        navigate(`/OTP/EmailVerify/${Data.email}`)
+      }, 3000);
+    }else{
+      SetMesage("Error Occured")
+      setTimeout(() => {
+        SetMesage(null)
+      }, 3000);
+    }
+  }
+
+  const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
+console.log(file,"file")
  
   useEffect(()=>{
           if(!Mailregex.test(Data.email) && Data.email!=""){
@@ -67,6 +121,7 @@ function Register() {
 
   return (
     <Wrapper>
+      {message?message==="Error Occured"?<Alert severity="error">{message}</Alert>:<Alert severity="success">{message}</Alert>:null}
       <Card sx={{ padding: 3, minWidth: 350 }}>
         <CardContent>
           <Typography variant="h4" align="center" gutterBottom>
@@ -80,7 +135,14 @@ function Register() {
             <TextField label="Password" type="password" onChange={HandleInputs} value={Data.password} variant="outlined" name="password" fullWidth />
             {Error.confirmPassword?<p style={{padding:"0px", height:"1px", color:"red"}}>{Error.confirmPassword}</p>:null}
             <TextField label="Confirm Password" type="Confirm password" value={Data.confirmPassword} onChange={HandleInputs} name="confirmPassword" variant="outlined" fullWidth />
-            <Button variant="contained" color="primary" fullWidth>
+            <Button  component="label" role={undefined} variant="outlined" tabIndex={-1} startIcon={<CloudUploadIcon />}>{!file?"Upload Profile Photo":file.name}
+      <VisuallyHiddenInput
+        type="file"
+        onChange={(event) =>Setfile(event.target.files[0])}
+        multiple
+      />
+    </Button>
+            <Button loading={loading} loadingPosition='start' loadingIndicator="loading..."  variant="contained" onClick={HandleRegister} color="primary" fullWidth>
               Register
             </Button>
           </FormWrapper>

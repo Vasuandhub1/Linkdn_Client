@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Login from '../features/auth/components/Login'
+import Login from '../components/Auth/Login'
 import AuthLayout from '../layouts/AuthLayout'
 
 

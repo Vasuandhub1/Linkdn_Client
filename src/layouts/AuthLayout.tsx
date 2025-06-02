@@ -11,7 +11,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     <SceenWrapper>
         <div>
               <Typography variant="h2" align="center" gutterBottom>
-            Linkdin
+            LinkedIn
           </Typography>
           {children}
         </div>
