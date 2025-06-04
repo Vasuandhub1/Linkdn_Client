@@ -9,10 +9,15 @@ import axios from "axios"
 import { Wrapper ,FormWrapper } from '../component'; // Ensure Wrapper is styled and imported correctly
 import { BASE_URL } from '../../Baseurl';
 import { Alert } from '@mui/material';
+import {useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
+
+import {  login } from '../../Redux/slices/authSlice';
 
 
 
-// Optional: Style the form wrapper
+
 
 
 const Login: React.FC = () => {
@@ -20,6 +25,9 @@ const Login: React.FC = () => {
     email:string,
     password:string,
   }
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
 
   const Mailregex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -43,11 +51,19 @@ const Login: React.FC = () => {
 
       const HandleLogin = async()=>{
         const res  = await axios.post(`${BASE_URL}/Auth/Login`,{...Data},{withCredentials:true})
-        console.log(res)
+        
         if(res?.status === 201){
+          const payload = {
+            email:res?.data?.data?.email,
+            name:res?.data?.data?.name,
+            _id:res?.data?.data?._id,
+            profile:res.data.data.profile
+          }
+          dispatch(login(payload))
           Setmessage(res?.data?.message)
           setTimeout(()=>{
             Setmessage(null)
+            navigate("/profile")
           },3000)
         }else{
           Setmessage("Error Occured")
