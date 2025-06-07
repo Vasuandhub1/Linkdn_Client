@@ -20,12 +20,21 @@ import { BASE_URL } from "../../Baseurl";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDispatch } from "react-redux";
 import { update } from "../../Redux/slices/authSlice";
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import {Box} from "@mui/material";
+import type { RootState } from "../../Redux/store";
+import auth from "../../Redux/slices/authSlice"
+import ProfilePhotoFilter from "./ProfilePhotoFilter";
 
 export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
 
     const [Skills,SetSkills] =useState<string>("")
     const [Description,SetDescription] =useState<string>("")
     const dispatch = useDispatch()
+    const {profile} = useSelector((state:RootState)=>state.auth)
     const {_id}= useSelector((state:RootState)=>state.auth)
     const [Experience,SetExperience]=useState({
         company:"",
@@ -34,15 +43,19 @@ export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
       })
       const [File,SetFile]=useState()
       const [loader,Setloader]= useState(false)
+       const [value, setValue] = React.useState('1');
+
+          const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+           setValue(newValue);
+         };
 
 
     const handleSkills = async()=>{
         try{
            
             const temp =[...data?.skills,...Skills.split(",")]
-            console.log(temp)
             Setloader(true)
-            const res = await axios.put(`${BASE_URL}/User/${_id}`,{skills:[...temp]},{withCredentials:true})
+            const res = await axios.put(`${BASE_URL}/user/${_id}`,{skills:[...temp]},{withCredentials:true})
            SetSkills("")
            if(res){
             Setloader(false)
@@ -57,8 +70,8 @@ export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
     const HandleDescription =async ()=>{
         try{
             Setloader(true)
-            const res = await axios.put(`${BASE_URL}/User/${_id}`,{description:Description},{withCredentials:true})
-            console.log(res)
+            const res = await axios.put(`${BASE_URL}/user/${_id}`,{description:Description},{withCredentials:true})
+            
             if(res){
                 Setloader(false)
             }
@@ -72,10 +85,10 @@ export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
         try{
             if(Experience.company && Experience.end && Experience.start){
                 const temp = [...data?.experience,Experience]
-                console.log(temp)
+                
                 Setloader(true)
-                const res =await axios.put(`${BASE_URL}/User/${_id}`,{experience:[...temp]},{withCredentials:true})
-                console.log(res)
+                const res =await axios.put(`${BASE_URL}/user/${_id}`,{experience:[...temp]},{withCredentials:true})
+                
                 if(res){
                     Setloader(false)
                 }
@@ -93,8 +106,8 @@ export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
             const formdata = new FormData()
             formdata.append("file",File)
             Setloader(true)
-            const res =  await axios.put(`${BASE_URL}/User/${_id}`,formdata,{withCredentials:true})
-            console.log(res?.data?.data)
+            const res =  await axios.put(`${BASE_URL}/user/${_id}`,formdata,{withCredentials:true})
+           
             const payload = {profile:res?.data?.data?.temp}
             dispatch(update(payload))
             if(res){
@@ -120,13 +133,39 @@ export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
                         Let Google help apps determine location. This means sending
                         anonymous location data to Google, even when no apps are running.
                     </DialogContentText>
-                    {purpose === "profile"?<><Button  component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>{!File?"Upload Profile Photo":File.name}
-      <VisuallyHiddenInput
-        type="file"
-        onChange={(event:React.ChangeEvent<HTMLInputElement>) =>SetFile(event?.target?.files[0])}
-        multiple
-      />
-    </Button> <Button variant="outlined" loading={loader} onClick={HandleProfile} > Upload New</Button></>:null}
+                    {purpose === "profile"?<>
+
+                    {/* {box element} */}
+                    
+                     <Box sx={{ width: '100%', typography: 'body1' }}>
+                          <TabContext value={value}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                              <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                <Tab label="Upload Profile" value="1" />
+                                <Tab label="Filters" value="2" />
+                                
+                              </TabList>
+                            </Box>
+                            <TabPanel value="1">
+                              <Button  component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>{!File?"Upload Profile Photo":File.name}
+                              <VisuallyHiddenInput
+                               type="file"
+                               onChange={(event:React.ChangeEvent<HTMLInputElement>) =>SetFile(event?.target?.files[0])}
+                                multiple
+                                  />
+                                </Button> <Button variant="outlined" loading={loader} onClick={HandleProfile} > Upload New</Button>
+                            </TabPanel>
+                            <TabPanel value="2">
+                                {/* {filter s} */}
+                                 <ProfilePhotoFilter/>
+                            </TabPanel>
+                          </TabContext>
+                        </Box>
+                    
+                    {/* {vox element} */}
+                    
+    
+    </>:null}
 
                     {purpose === "description" ? (
                        <DialogContent>

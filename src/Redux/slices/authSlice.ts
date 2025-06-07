@@ -6,7 +6,9 @@ export interface AuthState{
     name:string,
     email:string,
     _id:string,
-    profile:string
+    profile:string,
+    loading:boolean,
+    profiletag:string
 }
 
 
@@ -14,7 +16,9 @@ const initialState:AuthState = {
     name:"",
     email:"",
     _id:"",
-    profile:""
+    profile:"",
+    loading:true,
+    profiletag:""
 } 
 
 export const authSlice = createSlice({
@@ -27,6 +31,8 @@ export const authSlice = createSlice({
             state.email=action.payload.email
             state.name=action.payload.name
             state.profile=action.payload.profile
+            state.loading=action.payload.loading||false
+            state.profiletag=action.payload.profiletag
         },
         logout:(state)=>{
             state._id=""
@@ -46,6 +52,10 @@ export const authSlice = createSlice({
             if(action.payload.profile){
                 state.profile=action.payload.profile
             }
+            if(action.payload.profiletag){
+                state.profiletag=action.payload.profiletag
+            }
+            
         }
     }
 })

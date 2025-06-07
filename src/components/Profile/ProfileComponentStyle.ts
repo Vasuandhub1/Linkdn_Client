@@ -50,12 +50,19 @@ const ProfileAvatarContainer = styled.div`
   bottom: -75px;
   left: 30px;
 `;
-
-const ProfileAvatar = styled(Avatar)`
-  width: 150px !important;
-  height: 150px !important;
-  border: 4px solid white;
-`;
+interface ProfileAvatarProps {
+  coverImage?: string;
+}
+const ProfileAvatar = styled(Avatar)<ProfileAvatarProps>(({ coverImage }) => ({
+  width: '10rem',
+  height: '10rem',
+  border: '4px solid white',
+  borderRadius: '50%', 
+  backgroundImage: `url(${coverImage || 'https://via.placeholder.com/150'})`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  backgroundSize: 'cover', 
+}));
 
 const EditIconButton = styled(IconButton)`
   background-color: white !important;

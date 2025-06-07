@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Avatar } from "@mui/material";
 
 
 
@@ -30,6 +31,24 @@ const FormWrapper = styled.div`
   gap: 1rem;
   width: 300px;
 `;
+
+interface NaviAva{
+  coverImage?:string
+  ProfileSize?:number
+}
+
+const NavigationAvatar = styled(Avatar)<NaviAva>(({coverImage,ProfileSize})=>({
+    width: `${ProfileSize}rem`,
+  height: `${ProfileSize}rem`,
+  border: '4px solid white',
+  borderRadius: '50%', 
+  backgroundImage: `url(${coverImage || 'https://via.placeholder.com/150'})`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  backgroundSize: 'cover', 
+}))
+
+export {NavigationAvatar}
 
 
 

@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { Box , Button} from "@mui/material";
+import { Box , Button,Avatar} from "@mui/material";
+
 // Styled Components
 const HomeWrapper = styled(Box)`
   background-color: #f4f4f4;
@@ -77,6 +78,30 @@ const OptionButton = styled(Button)`
   align-items: center;
 `;
 
+// Styled Components
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const UserBox = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const StyledAvatar = styled(Avatar)`
+  margin-right: 0.75rem;
+`;
+
+const ImagePreview = styled.img`
+  width: 100%;
+  height: 300px; /* or any desired fixed height */
+  object-fit: contain;
+  border-radius: 8px;
+`;
 
 
-export {HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostCard,PostHeader,PostActions,SuggestedUser,LeftSidebar}
+
+export {UserBox,StyledAvatar,ModalHeader,ImagePreview,HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostCard,PostHeader,PostActions,SuggestedUser,LeftSidebar}

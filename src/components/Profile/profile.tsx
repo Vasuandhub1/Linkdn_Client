@@ -7,25 +7,25 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '../../Baseurl';
 import AlertDialougeSlide from './AlertDialougeSlide';
-
-
-
-
+import opentowork from "../../../src/assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png"
+import hiring from "../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png"
 
 const LinkedInProfilePage = () => {
 
-  const {name,email,profile,_id} = useSelector((state:RootState)=>state.auth)
+  const {name,email,profile,_id,profiletag} = useSelector((state:RootState)=>state.auth)
  
   const [ProfileData,SetProfileData] = useState()
   
 
   const HandleGetData = async()=>{
     try{
-      console.log(`${BASE_URL}/User/:${_id}`)
-      const res = await axios.get(`${BASE_URL}/User/${_id}`,{withCredentials:true})
-      console.log(res)
+     if(!_id){
+      return
+     }else{
+      const res = await axios.get(`${BASE_URL}/user/${_id}`,{withCredentials:true})
       SetProfileData({...res?.data?.data})
-      
+      return 
+     }
     }catch(err){
       console.log(err)
     }
@@ -78,7 +78,7 @@ useEffect(()=>{
           </CoverOverlay>
           {/* Profile Avatar with Edit */}
           <ProfileAvatarContainer onClick={()=>HandleEdit("profile")}>
-            <ProfileAvatar  src={!profile?"https://via.placeholder.com/150":profile} alt="Vasu Singh" />
+            <ProfileAvatar  sx={{width:"12rem", height:"12rem", position:"relative", top:"3rem"}} coverImage={profile}  src={profiletag===''?profile:profiletag==="hiring"?hiring:profiletag==="opentowork"?opentowork:profile} alt="Vasu Singh" />
             {/* <EditIconButton size="large"  style={{ position: 'absolute', bottom: 0, right: -10 }}>
               <EditIcon fontSize="small" />
             </EditIconButton> */}
@@ -123,10 +123,10 @@ useEffect(()=>{
             </SectionHeader>
             {ProfileData?.experience?.map((elem,index)=>{
               return (
-                <>
+                <div key={index}>
                 <Typography variant="body1">{elem.company}</Typography>
                 <Typography variant="body2" color="textSecondary">{elem.start.substr(0,7)} - {elem.end.substr(0,7)}</Typography>
-                </>
+                </div>
               )
             })}
           </Section>
