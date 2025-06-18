@@ -102,6 +102,33 @@ const ImagePreview = styled.img`
   border-radius: 8px;
 `;
 
+const ProfileCard = styled(Card)({
+  padding: '1rem',
+  borderRadius: '1rem',
+  textAlign: 'center',
+  background: '#fff',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+  maxWidth: 300,
+  margin: '0 auto',
+});
+
+const ProfileAvatar = styled(Avatar)({
+  width: 72,
+  height: 72,
+  border: '3px solid white',
+  margin: '0 auto',
+  marginTop: '-36px',
+  boxShadow: '0 0 0 3px #dce6f1',
+});
+
+const AddExperienceButton = styled(Button)({
+  marginTop: '1rem',
+  borderStyle: 'dashed',
+  textTransform: 'none',
+  color: '#666',
+  borderColor: '#ccc',
+});
 
 
-export {UserBox,StyledAvatar,ModalHeader,ImagePreview,HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostCard,PostHeader,PostActions,SuggestedUser,LeftSidebar}
+
+export {ProfileCard,ProfileAvatar,AddExperienceButton,UserBox,StyledAvatar,ModalHeader,ImagePreview,HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostCard,PostHeader,PostActions,SuggestedUser,LeftSidebar}

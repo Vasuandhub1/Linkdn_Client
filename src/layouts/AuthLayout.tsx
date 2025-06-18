@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { SceenWrapper } from '../components/component';
 import { Typography } from '@mui/material';
 

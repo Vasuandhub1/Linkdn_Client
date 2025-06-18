@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Typography, Avatar, Button, Grid,CardContent,Card, IconButton, Divider, Chip } from '@mui/material';
-import {HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostHeader,PostActions,SuggestedUser,LeftSidebar} from "./DashboardComponentStyle"
+import { Box, Typography, Avatar, Button, Grid,CardContent,Card, IconButton, Divider,Chip, MenuItem ,Menu } from '@mui/material';
+import {HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostHeader,PostActions,SuggestedUser,LeftSidebar,ProfileCard,ProfileAvatar} from "./DashboardComponentStyle"
 // import MoreVertIcon from '@mui/icons-material/MoreVert';
 // import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 // import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
@@ -23,22 +23,73 @@ import Repostcard from './RepostCard';
 import opentowork from "../../assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png"
 import hiring from "../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png"
 import {NavigationAvatar} from "../component"
+import { NavLink } from 'react-router-dom';
+import PostCardSkeleton from './PostCardSkeleton';
+
 function Dashboard() {
   
 
-const settings = {
-  dots: true,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: true,
-};
+
 
   const [TogglePost,SetTogglePost] = useState<boolean>(false)
   const {name,profile,profiletag} = useSelector((state:RootState)=>state.auth)
   const [Posts,SetPosts] = useState([])
   const [Repost,SetRepost] = useState([])
+  const [invitations,SetInvitations] = useState([])
+  const [news,Setnews]= useState([])
+  
+  const [loader,Setloader]= useState(true)
+  
+
+   const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (option) => {
+    if (option) {
+      console.log("Selected sort:", option); // Or set state here
+    }
+    setAnchorEl(null);
+  };
+  // now handle the  sort according to the no of likes
+
+  const SortOnTop = async()=>{
+    try{
+      Setloader(true)
+      SetPosts([])
+     const res = await axios.get(`${BASE_URL}/post/all/trending`,{withCredentials:true})
+     console.log(res.data.data,"top")
+     SetPosts(res?.data?.data)
+     Setloader(false)
+    }catch(err){
+      console.log(err)
+    }
+  } 
+
+  const getAllnews = async()=>{
+    try{
+      const res = await axios.get(`https://api.thenewsapi.com/v1/news/top?api_token=LzPqxSK6ODFPhTQrSMs15HJ0vK18GU4x7KfBRkB4&locale=us&limit=5`)
+      console.log(res,"news")
+      Setnews([...res?.data?.data]) 
+    }catch(err){
+      console.log(err)
+    }
+
+  }
+  const SortOnDate = async()=>{
+    try{
+       Setloader(true)
+      SetPosts([])
+     const res = await axios.get(`${BASE_URL}/post/all/date`,{withCredentials:true})
+     SetPosts(res.data.data)
+      Setloader(false)
+    }catch(err){
+      console.log(err)
+    }
+  } 
   // function 
   const HandleTogglePost = async()=>{
     if(TogglePost){
@@ -53,6 +104,7 @@ const settings = {
     try{
     const res = await axios.get(`${BASE_URL}/post/all`,{withCredentials:true})
     SetPosts(res?.data?.data)
+    Setloader(false)
     }catch(err){
       console.log(err)
     }
@@ -60,34 +112,59 @@ const settings = {
 
   const GetReposts= async()=>{
     try{
+       Setloader(true)
+      SetRepost([])
     const res = await axios.get(`${BASE_URL}/post/repost/all`,{withCredentials:true})
-    console.log(res?.data?.data.post,"reposts")
+    
     SetRepost(res?.data?.data?.post)
+    Setloader(false)
     }catch(err){
       console.log(err)
     }
   }
-
+console.log(Posts,"posts")
+  // useEffect(()=>{
+  //   GetPosts()
+  //   GetReposts()
+  // },[])
   useEffect(()=>{
     GetPosts()
     GetReposts()
-  },[])
-  useEffect(()=>{
-    GetPosts()
-    GetReposts()
+    getAllnews()
   },[TogglePost])
+
+  console.log(news,"news")
   
+  console.log(Posts,"postssss")
 
   return (
          <HomeWrapper>
           
       <LeftSidebar>
-        <Card style={{padding:"1rem", borderRadius:"1rem"}}>
-          <Typography variant="h6" mb={2}>Your Shortcuts</Typography>
-          <Typography variant="body2" mb={1}>#reactjs</Typography>
-          <Typography variant="body2" mb={1}>#developer-life</Typography>
-          <Typography variant="body2">#job-updates</Typography>
-        </Card>
+        
+         <ProfileCard>
+      {/* Background cover (mocked as solid for now) */}
+      <Box height={60} borderRadius="1rem 1rem 0 0" bgcolor="#cce0ff" />
+      <NavLink to={"/profile"}>
+     <Box sx={{display:"flex", justifyContent:"center"}} >
+      <NavigationAvatar 
+      style={{width:"5rem", height:"5rem", border: '3px solid white',margin: '0 auto',marginTop: '-36px'}}
+     coverImage={profile}
+      src={profiletag===''?profile:profiletag==="hiring"?hiring:profiletag==="opentowork"?opentowork:profile}
+     />
+     </Box>
+     </NavLink>
+
+      <Typography variant="h6" mt={1}>{name}</Typography>
+      <Typography variant="body2" color="text.secondary">
+        Student at Chameli Devi Group of Institutions, Gram Umrikheda, Near Indore
+      </Typography>
+      <Typography variant="caption" color="text.secondary">
+        Indore, Madhya Pradesh
+      </Typography>
+
+    </ProfileCard>
+       
 
         <Card style={{padding:"1rem", borderRadius:"1rem"}}>
           <Typography variant="h6" mb={2}>Groups</Typography>
@@ -122,16 +199,65 @@ const settings = {
           
         </Card>
 
-        <Divider sx={{marginBottom:"1rem"}}><Chip label="Sort Feed "/></Divider>
+          <>
+      <Divider sx={{ marginBottom: "1rem" }} textAlign='right'>
+        <Chip
+          label="Sort Feed"
+          onClick={handleClick}
+          sx={{ cursor: 'pointer' }}
+        />
+        
+      </Divider>
 
-        {Posts.map((post) => (
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => handleClose()}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <MenuItem onClick={() => SortOnDate()}>Latest</MenuItem>
+        <MenuItem onClick={() => SortOnTop()}>Trending</MenuItem>
+      </Menu>
+    </>
+
+        {/* {dropdown} */}
+
+        {
+          !loader?
+          Posts.map((post)=>{
+            return (
+              <Postcard post={post}/>
+            )
+          })
+          
+          :<PostCardSkeleton/>
+        }
+        {
+          !loader?
+          Repost.map((post)=>{
+            return (
+              <Repostcard post={post}/>
+            )
+          })
+          
+          :<PostCardSkeleton/>
+        }
+
+        {/* {Posts.map((post) => (
           <Postcard post={post}/>
         ))}
         {Repost.map((post)=>{
           return(
             <Repostcard post={post}/>
           )
-        })}
+        })} */}
         
       </FeedSection>
 
@@ -156,9 +282,14 @@ const settings = {
 
         <Card style={{padding:"1rem", borderRadius:"1rem"}}>
           <Typography variant="h6" mb={2}>Trending News</Typography>
-          <Typography variant="body2" gutterBottom>India’s tech hiring sees a 20% rise in Q2 2025.</Typography>
-          <Typography variant="body2" gutterBottom>React 19 beta released with server actions support.</Typography>
-          <Typography variant="body2">Startup ecosystem in Indore gains national traction.</Typography>
+          {news.map((elem)=>{
+            return(
+              <Card sx={{margin:"10px" ,padding:"10px"}}>
+              <Typography variant="body1" gutterBottom>{elem.snippet}</Typography>
+              </Card>
+            )
+          })}
+          
         </Card>
       </Sidebar>
     </HomeWrapper>

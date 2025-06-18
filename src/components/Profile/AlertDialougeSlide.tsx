@@ -157,7 +157,7 @@ export default function AlertDialougeSlide({ open, setopen, purpose, data }) {
                             </TabPanel>
                             <TabPanel value="2">
                                 {/* {filter s} */}
-                                 <ProfilePhotoFilter/>
+                                 <ProfilePhotoFilter setopen={setopen}/>
                             </TabPanel>
                           </TabContext>
                         </Box>

@@ -12,7 +12,7 @@ import { update } from '../../Redux/slices/authSlice';
 
 
 
-const ProfileFilterUI = () => {
+const ProfileFilterUI = ({setopen}) => {
 
   const {profile,profiletag,_id}=useSelector((state:RootState)=>state.auth)
   const [filter, setFilter] = useState('')
@@ -27,6 +27,7 @@ const ProfileFilterUI = () => {
       const res =await axios.put(`${BASE_URL}/user/profileTag/${_id}/${filter}`)
       const payload={profiletag:filter}
       dispatch(update(payload))
+      setopen(false)
     }catch(err){
       console.log(err)
     }

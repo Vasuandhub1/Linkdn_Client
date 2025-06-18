@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -10,9 +10,9 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Link,
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
@@ -25,10 +25,14 @@ import HelpIcon from '@mui/icons-material/Help';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../Redux/store';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {NavigationAvatar} from "./LayoutComponent"
 import opentowork from "../assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png"
 import hiring from "../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png"
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import axios from 'axios';
+import { BASE_URL } from '../Baseurl';
+import Badge from '@mui/material/Badge';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -61,13 +65,35 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: '100%',
 }));
 
+const navLinkStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textDecoration: 'none',
+  position: 'relative',
+};
+
+const underlineStyle = {
+  content: '""',
+  position: 'absolute',
+  bottom: 0,
+  height: '4px',
+  width: '100%',
+  backgroundColor: 'black',
+  borderRadius: '2px',
+};
+
+
+
 interface AuthLayoutProps {
   children: ReactNode;
 }
 
 const NavigationBar: React.FC<AuthLayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const {profile,name,profiletag}= useSelector((state:RootState)=>state.auth)
+  const {profile,name,profiletag,email,_id}= useSelector((state:RootState)=>state.auth)
+  const [selected,Setseleted] = useState("Dashboard")
+  const [connection,SetConnection]=useState(0)
   const navigate = useNavigate()
 
 
@@ -80,11 +106,25 @@ const NavigationBar: React.FC<AuthLayoutProps> = ({ children }) => {
     setAnchorEl(null);
   };
 
+  const HandlegetNotification = async()=>{
+    try{
+      const res = await axios.get(`${BASE_URL}/network/notified/${_id}`)
+      console.log(res)
+      SetConnection(res.data.data)
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   const handleLogout = ()=>{
     const cookiename = document.cookie
     document.cookie = `${cookiename}; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
     document.location.reload()
   }
+
+  useEffect(()=>{
+    HandlegetNotification()
+  },[])
 
   return (
     <div>
@@ -122,38 +162,97 @@ const NavigationBar: React.FC<AuthLayoutProps> = ({ children }) => {
           </Box>
 
           {/* Center - Navigation Icons */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <IconButton onClick={()=>navigate("/Dashboard")}  sx={{ display: 'flex', flexDirection:"column",fontSize:"15px" }}>
-              <HomeIcon />
-              Home
-            </IconButton>
-            <IconButton sx={{ display: 'flex', flexDirection:"column",fontSize:"15px" }}>
-              <BusinessCenterIcon />
-              Jobs
-            </IconButton>
-            <IconButton sx={{ display: 'flex', flexDirection:"column",fontSize:"15px" }}>
-              <ChatIcon />
-              Chats
-            </IconButton>
-            <IconButton sx={{ display: 'flex', flexDirection:"column",fontSize:"15px" }}>
-              <NotificationsIcon />
-              Notification
-            </IconButton>
-          </Box>
+         
+
+<Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+  <NavLink to="/Dashboard" style={{textDecoration:"none"}} >
+    {({ isActive }) => (
+      <Box sx={navLinkStyles}>
+        <IconButton disableRipple>
+          <HomeIcon sx={{ color: isActive ? "black" : "gray" }} />
+        </IconButton>
+        <Typography sx={{ fontSize: "15px", color: isActive ? "black" : "gray" }}>
+          Home
+        </Typography>
+        {isActive && <Box sx={underlineStyle} />}
+      </Box>
+    )}
+  </NavLink>
+
+  <NavLink to="/networks" style={{textDecoration:"none"}} >
+    {({ isActive }) => (
+      <Box sx={navLinkStyles}>
+        <IconButton disableRipple>
+           <Badge badgeContent={connection?connection:null} invisible={connection>0?false:true} color="primary">
+          <PeopleAltOutlinedIcon sx={{ color: isActive ? "black" : "gray" }} />
+          </Badge>
+        </IconButton>
+        <Typography sx={{ fontSize: "15px", color: isActive ? "black" : "gray" }}>
+          Connections
+        </Typography>
+        {isActive && <Box sx={underlineStyle} />}
+      </Box>
+    )}
+  </NavLink>
+
+  <NavLink to="/jobs" style={{textDecoration:"none"}} >
+    {({ isActive }) => (
+      <Box sx={navLinkStyles}>
+        <IconButton disableRipple>
+          <BusinessCenterIcon sx={{ color: isActive ? "black" : "gray" }} />
+        </IconButton>
+        <Typography sx={{ fontSize: "15px", color: isActive ? "black" : "gray" }}>
+          Jobs
+        </Typography>
+        {isActive && <Box sx={underlineStyle} />}
+      </Box>
+    )}
+  </NavLink>
+
+  <NavLink to="/message" style={{textDecoration:"none"}} >
+    {({ isActive }) => (
+      <Box sx={navLinkStyles}>
+        <IconButton disableRipple>
+          <ChatIcon sx={{ color: isActive ? "black" : "gray" }} />
+        </IconButton>
+        <Typography sx={{ fontSize: "15px", color: isActive ? "black" : "gray", }}>
+          Chats
+        </Typography>
+        {isActive && <Box sx={underlineStyle} />}
+      </Box>
+    )}
+  </NavLink>
+
+  <NavLink to="/notifications" style={{textDecoration:"none"}} >
+    {({ isActive }) => (
+      <Box sx={navLinkStyles}>
+        <IconButton disableRipple>
+          <NotificationsIcon sx={{ color: isActive ? "black" : "gray" }} />
+        </IconButton>
+        <Typography sx={{ fontSize: "15px", color: isActive ? "black" : "gray" }}>
+          Notification
+        </Typography>
+        {isActive && <Box sx={underlineStyle} />}
+      </Box>
+    )}
+  </NavLink>
+</Box>
+
+
 
           {/* Right - User Avatar and Menu */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <NavigationAvatar
+           
+            <Typography variant="body2" color="textSecondary">
+              {name}
+            </Typography>
+            <IconButton onClick={handleMenuOpen}>
+              <NavigationAvatar
               coverImage={profile}
               alt="Vasu Singh"
               src={profiletag===''?profile:profiletag==="hiring"?hiring:profiletag==="opentowork"?opentowork:profile}
               sx={{ marginRight: 1 }}
             />
-            <Typography variant="body2" color="textSecondary">
-              {name}
-            </Typography>
-            <IconButton onClick={handleMenuOpen}>
-              <AccountCircleIcon />
             </IconButton>
 
             <Menu
@@ -201,10 +300,10 @@ const NavigationBar: React.FC<AuthLayoutProps> = ({ children }) => {
                       />
                   <Box ml={1}>
                     <Typography fontWeight="bold" variant="body1">
-                      Vasu Singh
+                      {name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Full Stack Developer
+                      {email}
                     </Typography>
                   </Box>
                 </Box>

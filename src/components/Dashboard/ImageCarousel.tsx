@@ -103,14 +103,14 @@ const ImageCarousel = ({ urls = [] }) => {
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       handleNext();
-    }, 5000);
+    }, 6000);
 
     return () => clearInterval(intervalRef.current);
   },[]);
 
   const pauseAutoSlide = () => clearInterval(intervalRef.current);
   const resumeAutoSlide = () =>
-    (intervalRef.current = setInterval(handleNext, 1000));
+    (intervalRef.current = setInterval(handleNext, 5000));
 
   return (
     <CarouselWrapper
@@ -130,7 +130,7 @@ const ImageCarousel = ({ urls = [] }) => {
         {urls.map((url, idx) => (
           <Slide key={idx} style={{"textAlign":"center"}}>
             {loading && <div style={{paddingBottom:"1rem"}}> <DotLottieReact
-      src="https://lottie.host/b66a69e6-1a43-4967-8cf1-b351c7cb3229/hl9E7ZuQpr.lottie"
+      src="https://lottie.host/dbc79905-a7c9-45db-a2c2-b6defb27385a/vMdwoDShKY.lottie"
   // background="transparent"
   // speed="1"
   // style="width: 300px; height: 300px"

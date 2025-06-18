@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import {BrowserRouter,Routes,Route} from "react-router-dom"
 import './App.css'
+import Cookies from 'js-cookie';
+
 import {Wrapper,SceenWrapper} from "./components/component"
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
@@ -14,9 +16,12 @@ import { useSelector,useDispatch } from 'react-redux';
 import { BASE_URL } from './Baseurl';
 import { login } from './Redux/slices/authSlice';
 import ProtectedRoute from "./routes/ProtectedRoute"
+import NetworkPage from './pages/NetworkPage';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
-
+import ConnectionPage from './pages/ConnectionPage';
+import MessagePage from './pages/MessagePage';
+import PreloaderPage from './pages/PreloaderPage';
 
 // const Wrapper = styled.div`
 //   display: flex;
@@ -29,7 +34,7 @@ import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   const dispatch = useDispatch()
-  const token = document.cookie.split("=")[1]
+  const token = Cookies.get('User')
   const refreshUser = async()=>{
     try{
       const res= await axios.get(`${BASE_URL}/User/refresh/${token}`,{withCredentials:true})
@@ -67,6 +72,7 @@ function App() {
       <BrowserRouter>
       <Routes>
         <Route path='/Login' element={<LoginPage/>}/>
+        <Route path='/' element={<PreloaderPage/>}/>
         <Route path='/Register' element={<RegisterPage/>}/>
         <Route path='/OTP/:EmailVerify/:email' element={<OTP/>}/>
         <Route path ='/ForgotPassword' element={<ForgotPasswordPage/>}/>
@@ -74,6 +80,9 @@ function App() {
         <Route element={<ProtectedRoute/>}>
         <Route path='/profile' element={<ProfilePage/>}/>
         <Route path='/Dashboard' element={<DashboardPage/>}/>
+        <Route path='/networks' element={<NetworkPage/>}/>
+        <Route path='/Connections' element={<ConnectionPage/>}/>
+        <Route path='/message' element={<MessagePage/>}/>
         </Route>
       </Routes>
       </BrowserRouter>

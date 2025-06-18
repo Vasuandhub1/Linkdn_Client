@@ -51,13 +51,14 @@ const Login: React.FC = () => {
 
       const HandleLogin = async()=>{
         const res  = await axios.post(`${BASE_URL}/Auth/Login`,{...Data},{withCredentials:true})
-        
+        console.log(res,"login")
         if(res?.status === 201){
           const payload = {
             email:res?.data?.data?.email,
             name:res?.data?.data?.name,
             _id:res?.data?.data?._id,
             profile:res.data.data.profile,
+            profiletag:res?.data?.data?.ProfileTag,
             loading:false
           }
           dispatch(login(payload))

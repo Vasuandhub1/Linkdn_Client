@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 
   Button,
@@ -29,7 +29,13 @@ import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 import opentowork from "../../assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png"
 import hiring from "../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png"
 import {NavigationAvatar} from "../component"
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const settings = {
   dots: true,
@@ -46,16 +52,17 @@ const settings = {
 function Postcard({ post }) {
   
   const { profile, _id, name, email } = useSelector((state: RootState) => state.auth)
-  const [liked, Setliked] = useState([...post?._doc?.likes])
-  const [comments, Setcomments] = useState([...post?._doc?.comments])
+  const [liked, Setliked] = useState([...post?.likes])
+  const [comments, Setcomments] = useState([...post?.comments])
   const [ToggleComment,SetToggleComment]  = useState(false)
   const [comment,Setcomment]= useState("")
-  const [Repost,SetRepost] = useState([...post?._doc?.repost])
+  const [Repost,SetRepost] = useState([...post?.repost])
+  const [deleteWarning,SetdeletWarning]=useState(false)
  
 
   const HandleLike = async () => {
     try {
-      await axios.put(`${BASE_URL}/post/like/${_id}/${post._doc._id}`, { withCredentials: true })
+      await axios.put(`${BASE_URL}/post/like/${_id}/${post._id}`, { withCredentials: true })
       if (liked.includes(_id)) {
         const temp = liked.filter((elem) => {
           if (elem === _id) {
@@ -75,6 +82,14 @@ function Postcard({ post }) {
     }
   }
 
+  const HandleCancel = ()=>{
+    if(deleteWarning){
+      SetdeletWarning(false)
+    }else{
+      SetdeletWarning(true)
+    }
+  }
+
   const HandleToggle = ()=>{
     if(ToggleComment){
       SetToggleComment(false)
@@ -85,12 +100,12 @@ function Postcard({ post }) {
 
   const HandleRepost = async()=>{
     try{
-      if(_id == post._doc.user._id ){
+      if(_id == post.user._id ){
         alert("your can not repot your post")
         return 
       }
       const temp =[...Repost]
-      const res= await  axios.post(`${BASE_URL}/post/repost/${_id}/${post._doc._id}`,'',{withCredentials:true})
+      const res= await  axios.post(`${BASE_URL}/post/repost/${_id}/${post._id}`,'',{withCredentials:true})
       temp.push(_id)
       SetRepost([...temp])
     }catch(err){
@@ -103,7 +118,7 @@ function Postcard({ post }) {
       if(!comment)return
       const payload = {user:_id ,text:comment}
       const temp =[...comments]
-      const res = await axios.post(`${BASE_URL}/post/comment/${_id}/${post?._doc?._id}`,{comment},{withCredentials:true})
+      const res = await axios.post(`${BASE_URL}/post/comment/${_id}/${post?._id}`,{comment},{withCredentials:true})
       temp.push(payload)
       Setcomments([...temp])
       SetToggleComment(false)
@@ -113,9 +128,45 @@ function Postcard({ post }) {
     }
   }
 
+  const HandleDeletePost = async()=>{
+    try{
+      await axios.delete(`${BASE_URL}/post/${_id}/${post?._id}`)
+      HandleCancel()
+    }catch(err){
+      console.log(err)
+    }
+  }
+
 
   return (
     <PostCard>
+
+      {/* {deleet model} */}
+
+       <React.Fragment>
+      <Dialog
+        open={deleteWarning}
+        onClose={HandleCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete post?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you really want to delet your post,
+            All the reposts releted to the posts will get deleted
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={HandleCancel}>Disagree</Button>
+          <Button onClick={HandleDeletePost} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
 
       {/* repost compoenent */}
 
@@ -123,13 +174,19 @@ function Postcard({ post }) {
         <Box display="flex" gap={2} alignItems="center">
           <Avatar src={profile} />
           <Box>
-            <Typography variant="subtitle1">{post?._doc?.user?.name}</Typography>
-            <Typography variant="caption" color="textSecondary">{post?._doc?.user?.description}</Typography>
+            <Typography variant="subtitle1">{post?.user?.name}</Typography>
+            <Typography variant="caption" color="textSecondary">{post?.user?.description}</Typography>
           </Box>
         </Box>
+        {/* Adding delete button */}
+
+
         <IconButton>
-          <MoreVertIcon />
+          <MoreVertIcon  />
         </IconButton>
+        
+
+        
       </PostHeader>:null}
 
       {/* post */}
@@ -139,21 +196,24 @@ function Postcard({ post }) {
         <Box display="flex" gap={2} alignItems="center">
           <NavigationAvatar
           coverImage={post.profileUrl}
-          src={post?._doc?.user?.ProfileTag===''?profile:post?._doc?.user?.ProfileTag==="hiring"?hiring:post?._doc?.user?.ProfileTag==="opentowork"?opentowork:profile}
+          src={post?.user?.ProfileTag===''?profile:post?.user?.ProfileTag==="hiring"?hiring:post?.user?.ProfileTag==="opentowork"?opentowork:profile}
           />
           <Box>
-            <Typography variant="subtitle1">{post?._doc?.user?.name}</Typography>
-            <Typography variant="caption" color="textSecondary">{post?._doc?.user?.description}</Typography>
+            <Typography variant="subtitle1">{post?.user?.name}</Typography>
+            <Typography variant="caption" color="textSecondary">{post?.user?.description}</Typography>
           </Box>
         </Box>
-        <IconButton>
-          <MoreVertIcon />
-        </IconButton>
+
+        {_id === post?.user?._id ?
+        <IconButton onClick={HandleCancel}>
+          <DeleteForeverOutlinedIcon />
+        </IconButton>:null}
+
       </PostHeader>
 
       <Box mt={2}>
         <Typography variant="body1">
-          {post?._doc?.description}
+          {post?.description}
         </Typography>
       </Box>
       <Box mt={2}>
@@ -171,7 +231,11 @@ function Postcard({ post }) {
 
 
       <PostActions>
-        {liked.includes(_id) ? <Button startIcon={<ThumbUpAltIcon />} size="medium" onClick={HandleLike} color='secondary'>Like {liked.length}</Button> : <Button startIcon={<ThumbUpOffAltIcon />} size="medium" onClick={HandleLike} color='primary'>Like {liked.length}</Button>}
+        {liked.includes(_id) ?<> <Button startIcon={<ThumbUpAltIcon />} size="medium" onClick={HandleLike} color='secondary'>Like {liked.length}</Button>
+        
+         </>: <><Button startIcon={<ThumbUpOffAltIcon />} size="medium" onClick={HandleLike} color='primary'>Like {liked.length}</Button>
+        
+         </>}
         <Button startIcon={<MessageOutlinedIcon />} size="medium" onClick={HandleToggle} color='success'>Comment {comments.length}</Button>
         <Button startIcon={<DynamicFeedOutlinedIcon />} size="medium" onClick={HandleRepost} color='error'>Repost {Repost.length}</Button>
         <Button startIcon={<ShareOutlinedIcon />} size="medium" color='warning'>Share</Button>
