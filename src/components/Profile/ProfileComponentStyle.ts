@@ -16,7 +16,7 @@ const ProfileCard = styled(Card)`
   position: relative;
 `;
 
-const Banner = styled.div`
+const Banner = styled.div<{coverImage:string}>`
   height: 250px;
   background: ${({ coverImage }) => 
     `url(${coverImage || 'https://via.placeholder.com/900x250'}) no-repeat center center`};
@@ -51,7 +51,7 @@ const ProfileAvatarContainer = styled.div`
   left: 30px;
 `;
 interface ProfileAvatarProps {
-  coverImage?: string;
+  coverImage?: string|null;
 }
 const ProfileAvatar = styled(Avatar)<ProfileAvatarProps>(({ coverImage }) => ({
   width: '10rem',

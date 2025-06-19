@@ -1,5 +1,5 @@
-import React from 'react'
-import Profile from '../components/Profile/profile'
+
+import Profile from '../components/Profile/Profile'
 import NavigationBar from '../layouts/NavigationBar'
 function ProfilePage() {
   return (

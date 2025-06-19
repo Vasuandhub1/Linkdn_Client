@@ -33,7 +33,7 @@ const FormWrapper = styled.div`
 `;
 
 interface NaviAva{
-  coverImage?:string
+  coverImage?:string|null
   ProfileSize?:number
 }
 

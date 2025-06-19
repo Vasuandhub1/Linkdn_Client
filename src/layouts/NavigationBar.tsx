@@ -5,12 +5,12 @@ import {
   IconButton,
   Typography,
   InputBase,
-  Avatar,
+  
   Box,
   Menu,
   MenuItem,
   Divider,
-  Link,
+  
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -18,7 +18,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import ChatIcon from '@mui/icons-material/Chat';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import type { ReactNode } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
@@ -92,7 +92,6 @@ interface AuthLayoutProps {
 const NavigationBar: React.FC<AuthLayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const {profile,name,profiletag,email,_id}= useSelector((state:RootState)=>state.auth)
-  const [selected,Setseleted] = useState("Dashboard")
   const [connection,SetConnection]=useState(0)
   const navigate = useNavigate()
 

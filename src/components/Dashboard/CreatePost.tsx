@@ -12,18 +12,24 @@ import {
 import ImageIcon from '@mui/icons-material/Image';
 import CloseIcon from '@mui/icons-material/Close';
 import {UserBox,StyledAvatar,ImagePreview,ModalHeader} from "./DashboardComponentStyle"
-import auth from "../../Redux/slices/authSlice"
+
 import { useSelector } from 'react-redux';
 import { BASE_URL } from '../../Baseurl';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
-import PostCard from './PostCard';
+
 import Box from '@mui/material/Box';
+import type { RootState } from '../../Redux/store';
+
+interface CreatePostModalProps {
+  open: boolean;
+  setopen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 
-export default function CreatePostModal({open,setopen}){
+export default function CreatePostModal({open,setopen}:CreatePostModalProps){
 
-const {name,profile,email,_id} = useSelector((state:RootState)=>state.auth)
+const {name,profile,_id} = useSelector((state:RootState)=>state.auth)
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [alert,Setalert]=useState("")
@@ -51,7 +57,7 @@ const {name,profile,email,_id} = useSelector((state:RootState)=>state.auth)
         Setloader(true)
          const formdata = new FormData()
          formdata.append("description",description)
-         formdata.append("user",_id)
+         formdata.append("user",_id as string)
          images.forEach((elem)=>formdata.append("file",elem))
         const res = await axios.post(`${BASE_URL}/post/create`,formdata,{withCredentials:true})
         

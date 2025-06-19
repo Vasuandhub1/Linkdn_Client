@@ -4,14 +4,13 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Wrapper } from '../component'; // Ensure Wrapper is styled and imported correctly
+import { Wrapper } from '../component'; 
 import { FormWrapper } from '../component';
-import { data, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import axios from "axios"
 import { BASE_URL } from '../../Baseurl';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from '@mui/material';
-import SaveIcon from '@mui/icons-material/Save';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import styled from 'styled-components';
 
@@ -31,7 +30,7 @@ function Register() {
     confirmPassword:""
   })
 
-  const [file,Setfile]=useState()
+  const [file,Setfile]=useState<null|File>(null)
 
   const navigate = useNavigate()
 
@@ -46,8 +45,8 @@ function Register() {
 
       const [loading,SetLoading]=useState<boolean>(false)
 
-  let Mailregex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  let PasswordRegex = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/;
+  const Mailregex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const PasswordRegex = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/;
 
 
   const HandleInputs = async (e:React.ChangeEvent<HTMLInputElement>)=>{
@@ -138,7 +137,10 @@ console.log(file,"file")
             <Button  component="label" role={undefined} variant="outlined" tabIndex={-1} startIcon={<CloudUploadIcon />}>{!file?"Upload Profile Photo":file.name}
       <VisuallyHiddenInput
         type="file"
-        onChange={(event) =>Setfile(event.target.files[0])}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+       if(event.target.files && event.target.files.length > 0) {
+       Setfile(event.target.files[0]);}
+}}
         multiple
       />
     </Button>

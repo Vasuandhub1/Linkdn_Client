@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Skeleton, Avatar, IconButton, Typography, Divider, Button } from '@mui/material';
+
+import { Box, Skeleton, IconButton, Divider } from '@mui/material';
 
 const PostCardSkeleton = () => {
   return (

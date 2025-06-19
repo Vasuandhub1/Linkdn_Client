@@ -11,6 +11,9 @@ import { BASE_URL } from '../../Baseurl'
 import { useNavigate } from 'react-router-dom'
 import { Alert } from '@mui/material'
 
+
+
+
 function ForgotPassword() {
 
     const Mailregex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -55,7 +58,7 @@ function ForgotPassword() {
         return
     }
 }catch(err:any){
-      SetMesage(err.message)
+      SetMesage(err)
       setTimeout(() => {
         SetMesage(null)
       }, 3000);

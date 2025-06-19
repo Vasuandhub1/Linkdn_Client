@@ -3,12 +3,12 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 
 export interface AuthState{
-    name:string,
-    email:string,
-    _id:string,
-    profile:string,
-    loading:boolean,
-    profiletag:string
+    name:string | null,
+    email:string |null,
+    _id:string | null,
+    profile:string | null,
+    loading:boolean | null,
+    profiletag:string| null
 }
 
 

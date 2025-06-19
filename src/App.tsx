@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import {BrowserRouter,Routes,Route} from "react-router-dom"
 import './App.css'
 import Cookies from 'js-cookie';
 
-import {Wrapper,SceenWrapper} from "./components/component"
+
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import OTP from './pages/OTP';
@@ -12,7 +12,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import axios from 'axios';
-import { useSelector,useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { BASE_URL } from './Baseurl';
 import { login } from './Redux/slices/authSlice';
 import ProtectedRoute from "./routes/ProtectedRoute"

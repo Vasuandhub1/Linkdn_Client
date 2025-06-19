@@ -2,8 +2,9 @@ import styled from "styled-components";
 import { Avatar, InputBase, 
 } from '@mui/material';
 import {  alpha } from '@mui/material/styles';
+import type { Theme } from '@mui/material/styles';
 
-const Search = styled('div')(({ theme }) => ({
+const Search = styled.div<{ theme: Theme }>(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.black, 0.05),
@@ -18,7 +19,9 @@ const Search = styled('div')(({ theme }) => ({
   },
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+
+// SearchIconWrapper
+const SearchIconWrapper = styled.div<{ theme: Theme }>(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
@@ -28,14 +31,15 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center',
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+// StyledInputBase
+const StyledInputBase = styled(InputBase)<{ theme: Theme }>(({ theme }) => ({
   color: 'inherit',
   paddingLeft: `calc(1em + ${theme.spacing(4)})`,
   width: '100%',
 }));
 
 interface NaviAva{
-  coverImage?:string
+  coverImage?:string|null
   ProfileSize?:number
 }
 

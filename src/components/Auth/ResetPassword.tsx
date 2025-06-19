@@ -16,8 +16,8 @@ function ResetPassword() {
 
     const PasswordRegex = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/;
     interface dataType{
-        password:String
-        ConfirmPassword:String
+        password:string
+        ConfirmPassword:string
     }
     const navigate = useNavigate()
     const [Data,SetData]= useState<dataType>({

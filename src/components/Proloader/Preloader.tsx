@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import  { useEffect } from 'react'
 import { Box } from '@mui/material'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useNavigate } from 'react-router-dom';
-import loader from "../../assets/Animation - 1749733704156.gif"
+
 
 
 function Preloader() {

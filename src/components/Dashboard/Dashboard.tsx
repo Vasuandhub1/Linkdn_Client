@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Typography, Avatar, Button, Grid,CardContent,Card, IconButton, Divider,Chip, MenuItem ,Menu } from '@mui/material';
-import {HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,PostHeader,PostActions,SuggestedUser,LeftSidebar,ProfileCard,ProfileAvatar} from "./DashboardComponentStyle"
+import  { useEffect, useState } from 'react'
+import { Box, Typography, Avatar, Button,Card, Divider,Chip, MenuItem ,Menu } from '@mui/material';
+import {HomeWrapper,OptionButton,CreatePostOptions,FeedSection,Sidebar,SuggestedUser,LeftSidebar,ProfileCard} from "./DashboardComponentStyle"
 // import MoreVertIcon from '@mui/icons-material/MoreVert';
 // import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 // import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
@@ -25,9 +25,12 @@ import hiring from "../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.
 import {NavigationAvatar} from "../component"
 import { NavLink } from 'react-router-dom';
 import PostCardSkeleton from './PostCardSkeleton';
+import type { RootState } from '../../Redux/store';
+
+
 
 function Dashboard() {
-  
+
 
 
 
@@ -35,20 +38,20 @@ function Dashboard() {
   const {name,profile,profiletag} = useSelector((state:RootState)=>state.auth)
   const [Posts,SetPosts] = useState([])
   const [Repost,SetRepost] = useState([])
-  const [invitations,SetInvitations] = useState([])
   const [news,Setnews]= useState([])
   
   const [loader,Setloader]= useState(true)
   
 
-   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleClick = (event:React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (option) => {
+  const handleClose = (option:boolean) => {
     if (option) {
       console.log("Selected sort:", option); // Or set state here
     }
@@ -73,7 +76,7 @@ function Dashboard() {
     try{
       const res = await axios.get(`https://api.thenewsapi.com/v1/news/top?api_token=LzPqxSK6ODFPhTQrSMs15HJ0vK18GU4x7KfBRkB4&locale=us&limit=5`)
       console.log(res,"news")
-      Setnews([...res?.data?.data]) 
+      Setnews(res?.data?.data||[]) 
     }catch(err){
       console.log(err)
     }
@@ -212,7 +215,7 @@ console.log(Posts,"posts")
       <Menu
         anchorEl={anchorEl}
         open={open}
-        onClose={() => handleClose()}
+        onClose={() => handleClose(open)}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
@@ -282,7 +285,7 @@ console.log(Posts,"posts")
 
         <Card style={{padding:"1rem", borderRadius:"1rem"}}>
           <Typography variant="h6" mb={2}>Trending News</Typography>
-          {news.map((elem)=>{
+          {news.map((elem:{snippet:string})=>{
             return(
               <Card sx={{margin:"10px" ,padding:"10px"}}>
               <Typography variant="body1" gutterBottom>{elem.snippet}</Typography>

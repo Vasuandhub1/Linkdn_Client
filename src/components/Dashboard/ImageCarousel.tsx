@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Box, IconButton } from "@mui/material";
 import { styled } from "styled-components";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import CircularProgress from '@mui/material/CircularProgress';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 // Styled Components
 const CarouselWrapper = styled(Box)`
   position: relative;
@@ -23,12 +23,12 @@ const Slide = styled(Box)`
   max-width: 100%;
 `;
 
-const ImagePreview = styled.img`
+const ImagePreview = styled.img<{ loading?: boolean }>`
   width: 100%;
-  height: 300px; /* or any desired fixed height */
+  height: 300px;
   object-fit: contain;
   border-radius: 8px;
-  display: ${props => (props.loading ? 'none' : 'block')};
+  display: ${({ loading }) => (loading ? 'none' : 'block')};
 `;
 
 const NavButton = styled(IconButton)`
@@ -59,7 +59,7 @@ const DotContainer = styled(Box)`
   transform: translateX(-50%);
 `;
 
-const Dot = styled(Box)`
+const Dot = styled(Box)<{ active: boolean }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -67,12 +67,16 @@ const Dot = styled(Box)`
   cursor: pointer;
 `;
 
-const ImageCarousel = ({ urls = [] }) => {
+interface ImageCarouselProps {
+  urls: string[];
+}
+
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ urls = [] }) => {
   const [index, setIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
-   const [loading, setLoading] = useState(true);
-  const intervalRef = useRef(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const intervalRef = useRef<number | null>(null);
 
   const handlePrev = () => {
     setIndex((prev) => (prev > 0 ? prev - 1 : urls.length - 1));
@@ -82,16 +86,16 @@ const ImageCarousel = ({ urls = [] }) => {
     setIndex((prev) => (prev < urls.length - 1 ? prev + 1 : 0));
   };
 
-  const handleTouchStart = (e) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setTouchStart(e.touches[0].clientX);
   };
 
-  const handleTouchMove = (e) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     setTouchEnd(e.touches[0].clientX);
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (touchStart === null || touchEnd === null) return;
     const distance = touchStart - touchEnd;
     if (distance > 50) handleNext();
     else if (distance < -50) handlePrev();
@@ -99,18 +103,20 @@ const ImageCarousel = ({ urls = [] }) => {
     setTouchEnd(null);
   };
 
-  // Auto-slide
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      handleNext();
-    }, 6000);
+    intervalRef.current = setInterval(handleNext, 6000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
-    return () => clearInterval(intervalRef.current);
-  },[]);
+  const pauseAutoSlide = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
 
-  const pauseAutoSlide = () => clearInterval(intervalRef.current);
-  const resumeAutoSlide = () =>
-    (intervalRef.current = setInterval(handleNext, 5000));
+  const resumeAutoSlide = () => {
+    intervalRef.current = setInterval(handleNext, 5000);
+  };
 
   return (
     <CarouselWrapper
@@ -128,18 +134,23 @@ const ImageCarousel = ({ urls = [] }) => {
       </RightButton>
       <SlideTrack sx={{ transform: `translateX(-${index * 100}%)` }}>
         {urls.map((url, idx) => (
-          <Slide key={idx} style={{"textAlign":"center"}}>
-            {loading && <div style={{paddingBottom:"1rem"}}> <DotLottieReact
-      src="https://lottie.host/dbc79905-a7c9-45db-a2c2-b6defb27385a/vMdwoDShKY.lottie"
-  // background="transparent"
-  // speed="1"
-  // style="width: 300px; height: 300px"
-  loop
-  autoplay
-    /></div>}
-            <ImagePreview  src={url} alt={`slide-${idx}`} loading={loading}
-        onLoad={() => setLoading(false)}
-        onError={() => setLoading(false)} />
+          <Slide key={idx} style={{ textAlign: "center" }}>
+            {loading && (
+              <div style={{ paddingBottom: "1rem" }}>
+                <DotLottieReact
+                  src="https://lottie.host/dbc79905-a7c9-45db-a2c2-b6defb27385a/vMdwoDShKY.lottie"
+                  loop
+                  autoplay
+                />
+              </div>
+            )}
+            <ImagePreview
+              src={url}
+              alt={`slide-${idx}`}
+              loading={loading}
+              onLoad={() => setLoading(false)}
+              onError={() => setLoading(false)}
+            />
           </Slide>
         ))}
       </SlideTrack>

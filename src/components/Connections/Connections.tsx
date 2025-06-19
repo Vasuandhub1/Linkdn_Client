@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Typography, Avatar, Button, IconButton, TextField, Divider, MenuItem, Paper
+  Box, Typography, Button, IconButton, TextField, MenuItem, Paper
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { styled } from 'styled-components';
@@ -87,7 +87,17 @@ const PremiumCard = styled(Paper)`
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 `;
+interface ConnectionUser {
+  _id:string,
+  name: string;
+  profilePic: string;
+  ProfileTag: string;
+  description: string;
+}
 
+interface ConnectionData {
+  Connections: ConnectionUser;
+}
 
 const Connections = () => {
     const [Connections,SetConnections] = useState([])
@@ -113,7 +123,7 @@ const Connections = () => {
         return
       }else{
         let temp = [...Connections]
-        temp = temp.filter((elem)=>{
+        temp = temp.filter((elem:ConnectionData)=>{
           // console.log(elem)
           
           if(elem.Connections.name.toLowerCase().includes(e.target.value.toLowerCase())){
@@ -172,7 +182,7 @@ const Connections = () => {
         </SearchBox>
 
         <ConnectionList>
-          {search.length === 0?Connections.map((user, index) => (
+          {search.length === 0?Connections.map((user:ConnectionData, index:number) => (
             <ConnectionCard key={index}>
               <InfoSection>
                 <NavigationAvatar
@@ -200,7 +210,7 @@ const Connections = () => {
                 </IconButton>
               </Box>
             </ConnectionCard>
-          )):search.map((user, index) => (
+          )):search.map((user:ConnectionData, index) => (
             <ConnectionCard key={index}>
               <InfoSection>
                 <NavigationAvatar

@@ -1,99 +1,119 @@
-import React, { useState,useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import {ProfileAvatar,ProfileAvatarContainer,ProfileCard,SkillChip,SectionHeader,Section,Content,EditIconButton,CoverOverlay,Banner,ProfileWrapper,CoverButton} from "./ProfileComponentStyle"
+import {
+  ProfileAvatar,
+  ProfileAvatarContainer,
+  ProfileCard,
+  SkillChip,
+  SectionHeader,
+  Section,
+  Content,
+  EditIconButton,
+  CoverOverlay,
+  Banner,
+  ProfileWrapper,
+  CoverButton,
+} from './ProfileComponentStyle';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '../../Baseurl';
 import AlertDialougeSlide from './AlertDialougeSlide';
-import opentowork from "../../../src/assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png"
-import hiring from "../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png"
+import opentowork from '../../../src/assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png';
+import hiring from '../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png';
+import type { RootState } from '../../Redux/store';
 
-const LinkedInProfilePage = () => {
+interface Experience {
+  company: string;
+  start: string;
+  end: string;
+}
 
-  const {name,email,profile,_id,profiletag} = useSelector((state:RootState)=>state.auth)
- 
-  const [ProfileData,SetProfileData] = useState()
-  
+interface ProfileInfo {
+  description?: string;
+  skills?: string[];
+  experience?: Experience[];
+  // You can add other optional fields if needed
+}
 
-  const HandleGetData = async()=>{
-    try{
-     if(!_id){
-      return
-     }else{
-      const res = await axios.get(`${BASE_URL}/user/${_id}`,{withCredentials:true})
-      SetProfileData({...res?.data?.data})
-      return 
-     }
-    }catch(err){
-      console.log(err)
+const Profile = () => {
+  const { name, email, profile, _id, profiletag } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  const [ProfileData, SetProfileData] = useState<ProfileInfo | null>(null);
+  const [open, SetOpen] = useState<boolean>(false);
+  const [Purpose, SetPurpose] = useState<string|null>();
+
+  const HandleGetData = async () => {
+    try {
+      if (_id) {
+        const res = await axios.get(`${BASE_URL}/user/${_id}`, {
+          withCredentials: true,
+        });
+        SetProfileData({ ...res?.data?.data });
+      }
+    } catch (err) {
+      console.error(err);
     }
-  }
-  const [open,SetOpen] = useState<boolean>(false)
-  const [Purpose,SetPurpose] = useState<string>("")
+  };
 
-  const HandleEdit = (purpose:string)=>{ 
-    console.log(purpose)
-    if(open){
-      SetOpen(false)
-    }else{
-      if(purpose == "description"){
-        SetPurpose(purpose)
-      
-      }
-      if(purpose == "experience"){
-        SetPurpose(purpose)
-      }
-      if(purpose == "skills"){
-        SetPurpose(purpose)
-      }
-      if(purpose == "profile"){
-        SetPurpose(purpose)
-      }
-      SetOpen(true)
+  const HandleEdit = (purpose: string) => {
+    SetPurpose(purpose);
+    SetOpen(true);
+  };
 
-    }
-    
-  }
-  
+  useEffect(() => {
+    HandleGetData();
+  }, [open, _id]);
 
-useEffect(()=>{
-    HandleGetData()
-  },[])
+  const formatDate = (date?: string) => (date ? date.slice(0, 7) : 'Present');
 
-useEffect(()=>{
-    HandleGetData()
-  },[open,_id])
-  
   return (
     <ProfileWrapper>
-      
       <ProfileCard>
-        {/* Cover Section */}
-        <AlertDialougeSlide open={open} setopen={SetOpen}  purpose={Purpose} data={ProfileData}/>
-        <Banner coverImage={profile}>
-          <CoverOverlay >
+    <AlertDialougeSlide
+  open={open}
+  setopen={SetOpen}
+  purpose={Purpose ?? null}
+  data={{
+    skills: ProfileData?.skills ?? [],
+    experience: ProfileData?.experience ?? [],
+  }}
+/>
+
+
+        <Banner coverImage={profile || ''}>
+          <CoverOverlay>
             <CoverButton startIcon={<CameraAltIcon />}>Edit Cover Photo</CoverButton>
           </CoverOverlay>
-          {/* Profile Avatar with Edit */}
-          <ProfileAvatarContainer onClick={()=>HandleEdit("profile")}>
-            <ProfileAvatar  sx={{width:"12rem", height:"12rem", position:"relative", top:"3rem"}} coverImage={profile}  src={profiletag===''?profile:profiletag==="hiring"?hiring:profiletag==="opentowork"?opentowork:profile} alt="Vasu Singh" />
-            {/* <EditIconButton size="large"  style={{ position: 'absolute', bottom: 0, right: -10 }}>
-              <EditIcon fontSize="small" />
-            </EditIconButton> */}
+
+          <ProfileAvatarContainer onClick={() => HandleEdit('profile')}>
+            <ProfileAvatar
+              sx={{ width: '12rem', height: '12rem', position: 'relative', top: '3rem' }}
+              coverImage={profile}
+              src={
+                profiletag === ''
+                  ? profile
+                  : profiletag === 'hiring'
+                  ? hiring
+                  : profiletag === 'opentowork'
+                  ? opentowork
+                  : profile
+              }
+              alt="Vasu Singh"
+            />
           </ProfileAvatarContainer>
         </Banner>
 
-        {/* Profile Content */}
         <Content>
-          {/* Basic Info */}
           <Section>
             <SectionHeader>
               <div>
-                <Typography variant="h5">{name!}</Typography>
+                <Typography variant="h5">{name}</Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                  {email!}
+                  {email}
                 </Typography>
                 <Typography variant="subtitle1" color="textSecondary">
                   {ProfileData?.description}
@@ -102,51 +122,56 @@ useEffect(()=>{
                   Indore, Madhya Pradesh, India · 500+ connections
                 </Typography>
               </div>
-        
-              <EditIconButton onClick={()=>HandleEdit("description")} name="description" size="small">
+
+              <EditIconButton onClick={() => HandleEdit('description')} size="small">
                 <EditIcon fontSize="small" />
               </EditIconButton>
             </SectionHeader>
             <Box mt={2}>
-              <Button variant="contained" color="primary" sx={{ mr: 1 }}>Message</Button>
-              <Button variant="outlined" color="primary">Connect</Button>
+              <Button variant="contained" color="primary" sx={{ mr: 1 }}>
+                Message
+              </Button>
+              <Button variant="outlined" color="primary">
+                Connect
+              </Button>
             </Box>
           </Section>
 
-          {/* Experience */}
           <Section>
             <SectionHeader>
               <Typography variant="h6">Experience</Typography>
-              <EditIconButton onClick={()=>HandleEdit("experience")} size="small">
+              <EditIconButton onClick={() => HandleEdit('experience')} size="small">
                 <EditIcon fontSize="small" />
               </EditIconButton>
             </SectionHeader>
-            {ProfileData?.experience?.map((elem,index)=>{
-              return (
-                <div key={index}>
+
+            {ProfileData?.experience?.map((elem, index) => (
+              <Box key={index}>
                 <Typography variant="body1">{elem.company}</Typography>
-                <Typography variant="body2" color="textSecondary">{elem.start.substr(0,7)} - {elem.end.substr(0,7)}</Typography>
-                </div>
-              )
-            })}
+                <Typography variant="body2" color="textSecondary">
+                  {formatDate(elem.start)} - {formatDate(elem.end)}
+                </Typography>
+              </Box>
+            ))}
           </Section>
 
-          {/* Skills */}
           <Section>
             <SectionHeader>
               <Typography variant="h6">Skills</Typography>
-              <EditIconButton onClick={()=>HandleEdit("skills")} size="small">
+              <EditIconButton onClick={() => HandleEdit('skills')} size="small">
                 <EditIcon fontSize="small" />
               </EditIconButton>
             </SectionHeader>
-            {!ProfileData?<SkillChip>Add some skills to showcase</SkillChip>:ProfileData?.skills?.map((elem:string,index:number)=>{
-              return (
-                <SkillChip key={index}>{elem}</SkillChip>
-              )
-            })}
+
+            {ProfileData?.skills?.length ? (
+              ProfileData.skills.map((skill, index) => (
+                <SkillChip key={index}>{skill}</SkillChip>
+              ))
+            ) : (
+              <SkillChip>Add some skills to showcase</SkillChip>
+            )}
           </Section>
 
-          {/* Education */}
           <Section>
             <SectionHeader>
               <Typography variant="h6">Education</Typography>
@@ -155,7 +180,9 @@ useEffect(()=>{
               </EditIconButton>
             </SectionHeader>
             <Typography variant="body1">Bachelor of Technology (B.Tech)</Typography>
-            <Typography variant="body2" color="textSecondary">XYZ University, 2020 - 2024</Typography>
+            <Typography variant="body2" color="textSecondary">
+              XYZ University, 2020 - 2024
+            </Typography>
           </Section>
         </Content>
       </ProfileCard>
@@ -163,4 +190,4 @@ useEffect(()=>{
   );
 };
 
-export default LinkedInProfilePage;
+export default Profile;

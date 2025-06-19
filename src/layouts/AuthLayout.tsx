@@ -1,6 +1,7 @@
 import React from 'react';
 import { SceenWrapper } from '../components/component';
 import { Typography } from '@mui/material';
+import type { ReactNode } from 'react';
 
 interface AuthLayoutProps {
   children: ReactNode;

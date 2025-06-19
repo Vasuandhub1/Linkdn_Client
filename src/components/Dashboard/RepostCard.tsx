@@ -12,7 +12,7 @@ import {
   InputLabel,
   Chip
 } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
@@ -26,30 +26,23 @@ import { BASE_URL } from '../../Baseurl';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import Divider from '@mui/material/Divider';
-import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
+
 import opentowork from "../../assets/AAYQAQSOAAgAAQAAAAAAAB-zrMZEDXI2T62PSuT6kpB6qg.png"
 import hiring from "../../assets/AAYQAQSOAAgAAQAAAAAAABy3-hIQRcT8QpykdK6OdWi7yQ.png"
 import {NavigationAvatar} from "../component"
 
 
-const settings = {
-  dots: true,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: true,
-};
 
 
 
 
-function Repostcard({ post }) {
+
+function Repostcard({ post }:any) {
   
   console.log(post, "post")
-  const { profile, _id, name, email } = useSelector((state: RootState) => state.auth)
-  const [liked, Setliked] = useState([...post?._doc?.likes])
-  const [comments, Setcomments] = useState([...post?._doc?.comments])
+  const { profile, _id } = useSelector((state: RootState) => state.auth)
+  const [liked, Setliked] = useState(post?._doc?.likes||[])
+  const [comments, Setcomments] = useState(post?._doc?.comments||[])
   const [ToggleComment,SetToggleComment]  = useState(false)
   const [comment,Setcomment]= useState("")
   console.log(liked, "likde")
@@ -58,7 +51,7 @@ function Repostcard({ post }) {
     try {
       await axios.put(`${BASE_URL}/post/repost/like/${_id}/${post._doc._id}`, { withCredentials: true })
       if (liked.includes(_id)) {
-        const temp = liked.filter((elem) => {
+        const temp = liked.filter((elem:string) => {
           if (elem === _id) {
             return false
           } else {
@@ -89,7 +82,7 @@ function Repostcard({ post }) {
         if(!comment)return
       const payload = {user:_id ,text:comment}
       const temp =[...comments]
-      const res = await axios.post(`${BASE_URL}/post/repost/comment/${_id}/${post?._doc?._id}`,{comment},{withCredentials:true})
+      await axios.post(`${BASE_URL}/post/repost/comment/${_id}/${post?._doc?._id}`,{comment},{withCredentials:true})
       temp.push(payload)
       Setcomments([...temp])
       SetToggleComment(false)
@@ -176,7 +169,7 @@ function Repostcard({ post }) {
 
       {ToggleComment?
       <>
-      {comments.map((elem)=>{
+      {comments.map((elem:{text:string})=>{
         return (
         <Box sx={{padding:"0.1rem"}}>
           <Divider/>

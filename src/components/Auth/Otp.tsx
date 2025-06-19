@@ -1,12 +1,12 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Wrapper } from "../component"; // Ensure Wrapper is styled and imported correctly
+import { Wrapper } from "../component"; 
 import { FormWrapper } from '../component';
-import { NavLink } from 'react-router-dom';
+
 import axios from "axios"
 import { BASE_URL } from '../../Baseurl';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +29,7 @@ function Otp() {
     const HandleVerify = async()=>{
       if(EmailVerify == "EmailVerify"){
       if(!OTP || OTP.length<6){
-        if(OTP?.length < 6){
+        if(OTP?.length || 0 < 6){
           SetMessage("Please Enter OTP of 6 Digits")
           return
         }
@@ -54,7 +54,7 @@ function Otp() {
       else{
         // 
         if(!OTP || OTP.length<6){
-        if(OTP?.length < 6){
+        if(OTP?.length || 0 < 6){
           SetMessage("Please Enter OTP of 6 Digits")
           return
         }

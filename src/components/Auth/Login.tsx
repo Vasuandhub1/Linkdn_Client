@@ -106,8 +106,13 @@ const Login: React.FC = () => {
             {Error.email?<p style={{padding:"0px", height:"1px", color:"red"}}>{Error.email}</p>:null}
             <TextField label="Email" type="email" name='email' onChange={HandleInputs} value={Data.email} variant="outlined" fullWidth />
             {Error.password?<p style={{padding:"0px", height:"1px", color:"red"}}>{Error.password}</p>:null}
-            <TextField label="Password" type="password" name='password' onChange={HandleInputs} value={Data.password} variant="outlined" fullWidth />
-            <Button variant="contained" onClick={HandleLogin} color="primary" fullWidth>
+            <TextField label="Password" type="password" name='password' onChange={HandleInputs} value={Data.password} variant="outlined" fullWidth onKeyDown={(e)=>{
+            if(e.key=="Enter" ){
+              HandleLogin()}else{
+                console.log("e")
+              }
+              }} />
+            <Button variant="contained" onClick={HandleLogin} color="primary"  fullWidth>
               Login
             </Button>
           </FormWrapper>

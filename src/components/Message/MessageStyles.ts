@@ -1,6 +1,6 @@
 import {
   Box,
-  TextField,
+  
   Card,
 } from '@mui/material';
 import styled from 'styled-components';
@@ -85,7 +85,7 @@ width: 100%;
   padding: 0.5rem;
 `;
 
-const MessageItem = styled(Box)`
+const MessageItem = styled(Box)<{selected:boolean}>`
   width: 90%;
   display: flex;
   align-item:center;
@@ -148,4 +148,4 @@ const PremiumCard = styled(Card)`
 `;
 
 
-export {PremiumCard,AdCard,Search,SidebarChat,ChatArea,SidebarOuter,ChatFooter,ChatHeader,ChatBody,MessageItem,MessageList,TabBar,Sidebar,Container,SidebarSearch,SidebarHeader,RightSection}
+export {PremiumCard,AdCard,SidebarChat,ChatArea,SidebarOuter,ChatFooter,ChatHeader,ChatBody,MessageItem,MessageList,TabBar,Sidebar,Container,SidebarSearch,SidebarHeader,RightSection}
